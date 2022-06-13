@@ -6,14 +6,21 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @AllArgsConstructor
+@NoArgsConstructor
 public class ArticleController {
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @SneakyThrows
     @Operation(summary = "Get article by article ID", description = "Gets the article by article ID")
@@ -25,7 +32,9 @@ public class ArticleController {
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/articles/getArticleById/{articleId}")
     public ResponseEntity<ArticleDto> getArticleById(@PathVariable int articleId) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+
+        ArticleDto article = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts/" + articleId, ArticleDto.class);
+        return ResponseEntity.ok(article);
     }
 
     @SneakyThrows
@@ -36,7 +45,7 @@ public class ArticleController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
     })
     @CrossOrigin(origins = "*")
-    @GetMapping(value = "/articles/getArticleById/{articleId}")
+    @GetMapping(value = "/articles/getArticleByUserId/{articleId}")
     public ResponseEntity<ArticleDto> getArticleByUserId(@PathVariable int userId) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
@@ -62,7 +71,7 @@ public class ArticleController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
     })
     @CrossOrigin(origins = "*")
-    @GetMapping(value = "/articles/deleteArticle/{articleId")
+    @GetMapping(value = "/articles/deleteArticle/{articleId}")
     public ResponseEntity<ArticleDto> deleteArticle(@PathVariable int articleId) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
