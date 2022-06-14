@@ -46,7 +46,7 @@ public class ArticleController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
     })
     @CrossOrigin(origins = "*")
-    @GetMapping(value = "/articles/getArticleByUserId/{articleId}")
+    @GetMapping(value = "/articles/getArticleByUserId/{userId}")
     public ResponseEntity<ArticleDto> getArticleByUserId(@PathVariable int userId) {
         //TODO: Get a list of articles made by a user
 //        ArticleDto article = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts?userId=" + userId, ArticleDto.class);
