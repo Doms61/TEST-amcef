@@ -58,6 +58,7 @@ public class ArticleController {
     public ResponseEntity<List<ArticleDto>> getArticleByUserId(@PathVariable int userId) {
         //TODO: Get a list of articles made by a user
         var article = articleService.getArticleByUserId(userId);
+        System.out.println("userId: " + userId);
         return ResponseEntity.ok(article);
 
 //        try {

@@ -1,15 +1,14 @@
 package com.dominik.intro.project.connector;
 
-import java.util.List;
-
+import com.dominik.intro.project.model.ArticleDto;
+import com.dominik.intro.project.model.ArticleList;
+import com.dominik.intro.project.model.UserDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.dominik.intro.project.model.ArticleDto;
-import com.dominik.intro.project.model.UserDto;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -27,10 +26,7 @@ public class ExternalConnector {
     }
 
     public List<ArticleDto> getArticlesByUserId(int userId) {
-
-        var forObject = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts?userId=" + userId, ArticleDto.class);
-        System.out.println("For Object: " + forObject);
-        return null;
+        return restTemplate.getForObject(BASE_URL + POST +"?userId=" + userId , ArticleList.class).getArticleDtos();
     }
 
     public List<UserDto> getUsers() {

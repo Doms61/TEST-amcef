@@ -54,20 +54,19 @@ public class ArticleService {
 
     }
 
-    //TODO: fix it for all articles
     public List<ArticleDto> getArticleByUserId(int userId) {
         var articles = articleRepository.findAllByUserId(userId);
-        if (articles != null) {
+        if (!articles.isEmpty()) {
             List<ArticleDto> list = new ArrayList<>();
             articles.forEach(article -> list.add(entityToDtoMapper.mapToDto(article)));
             return list;
         } else {
             var articlesDto = connector.getArticlesByUserId(userId);
-            if (articlesDto == null) {
+            if (articlesDto.isEmpty()) {
                 //TODO:
                 throw new ArticleNotFoundException("Article could not be found!");
             }
-//            articlesDto.forEach(articleDto -> articleRepository.save(dtoToEntityMapper.mapToEntity(articleDto)));
+            articlesDto.forEach(articleDto -> articleRepository.save(dtoToEntityMapper.mapToEntity(articleDto)));
             return articlesDto;
         }
     }
