@@ -8,19 +8,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 @AllArgsConstructor
 @NoArgsConstructor
 public class ArticleController {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private ArticleService articleService;
 
     @SneakyThrows
     @Operation(summary = "Get article by article ID", description = "Gets the article by article ID")
@@ -59,8 +56,11 @@ public class ArticleController {
     })
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/articles/addArticle")
-    public ResponseEntity<ArticleDto> addArticle(@RequestBody ArticleDto articleDto) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+    public ResponseEntity<Void> addArticle(@RequestBody ArticleDto articleDto) {
+        //TODO: add article to DB, if a user is present at the third party
+//        var save = articleRepository.save(articleDtoToArticleEntityMapper.mapToEntity(articleDto));
+//        System.out.println(save);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @SneakyThrows
