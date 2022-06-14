@@ -1,6 +1,8 @@
 package com.dominik.intro.project.controller;
 
+import com.dominik.intro.project.exception.ArticleNotFoundException;
 import com.dominik.intro.project.model.ArticleDto;
+import com.dominik.intro.project.service.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,9 +31,11 @@ public class ArticleController {
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/articles/getArticleById/{articleId}")
     public ResponseEntity<ArticleDto> getArticleById(@PathVariable int articleId) {
-
-        ArticleDto article = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts/" + articleId, ArticleDto.class);
-        return ResponseEntity.ok(article);
+        try {
+            return ResponseEntity.ok(articleService.getArticleById(articleId));
+        } catch (ArticleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @SneakyThrows
@@ -44,7 +48,15 @@ public class ArticleController {
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/articles/getArticleByUserId/{articleId}")
     public ResponseEntity<ArticleDto> getArticleByUserId(@PathVariable int userId) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        //TODO: Get a list of articles made by a user
+//        ArticleDto article = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts?userId=" + userId, ArticleDto.class);
+        return null;//ResponseEntity.ok(article);
+
+//        try {
+//            return ResponseEntity.ok(articleService.getArticleByUserId(userId));
+//        } catch (ArticleNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
     }
 
     @SneakyThrows
@@ -73,6 +85,7 @@ public class ArticleController {
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/articles/deleteArticle/{articleId}")
     public ResponseEntity<ArticleDto> deleteArticle(@PathVariable int articleId) {
+        //TODO: delete article, but only if the article was made by the same user
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 
@@ -86,6 +99,7 @@ public class ArticleController {
     @CrossOrigin(origins = "*")
     @PutMapping(value = "/articles/updateArticle")
     public ResponseEntity<ArticleDto> updateArticle(@PathVariable int articleId, @RequestBody ArticleDto articleDto) {
+        //TODO: update article, but only if the article was made by the same user
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 
