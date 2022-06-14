@@ -1,8 +1,5 @@
 package com.dominik.intro.project.controller;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.dominik.intro.project.exception.ArticleNotFoundException;
 import com.dominik.intro.project.model.ArticleDto;
 import com.dominik.intro.project.service.ArticleService;
@@ -13,9 +10,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 @AllArgsConstructor
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class ArticleController {
 
     private static final Logger LOG = Logger.getLogger("Article Controller");
+    @Autowired
     private ArticleService articleService;
 
     @SneakyThrows
@@ -36,7 +38,7 @@ public class ArticleController {
     @GetMapping(value = "/articles/getArticleById/{articleId}")
     public ResponseEntity<ArticleDto> getArticleById(@PathVariable int articleId) {
         try {
-            LOG.log(Level.INFO, "Getting article by article id: {}", articleId);
+            LOG.log(Level.INFO, "Getting article by article id: {0}", articleId);
             return ResponseEntity.ok(articleService.getArticleById(articleId));
         } catch (ArticleNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
