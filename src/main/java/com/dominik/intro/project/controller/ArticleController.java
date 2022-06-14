@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,8 +38,8 @@ public class ArticleController {
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/articles/getArticleById/{articleId}")
     public ResponseEntity<ArticleDto> getArticleById(@PathVariable int articleId) {
+        LOG.log(Level.INFO, "Getting article by article id: {0}", articleId);
         try {
-            LOG.log(Level.INFO, "Getting article by article id: {0}", articleId);
             return ResponseEntity.ok(articleService.getArticleById(articleId));
         } catch (ArticleNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -54,10 +55,10 @@ public class ArticleController {
     })
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/articles/getArticleByUserId/{userId}")
-    public ResponseEntity<ArticleDto> getArticleByUserId(@PathVariable int userId) {
+    public ResponseEntity<List<ArticleDto>> getArticleByUserId(@PathVariable int userId) {
         //TODO: Get a list of articles made by a user
-//        ArticleDto article = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts?userId=" + userId, ArticleDto.class);
-        return null;//ResponseEntity.ok(article);
+        var article = articleService.getArticleByUserId(userId);
+        return ResponseEntity.ok(article);
 
 //        try {
 //            return ResponseEntity.ok(articleService.getArticleByUserId(userId));

@@ -1,5 +1,6 @@
 package com.dominik.intro.project.service;
 
+import com.dominik.intro.project.connector.ExternalConnector;
 import com.dominik.intro.project.db.repo.ArticleRepository;
 import com.dominik.intro.project.exception.ArticleNotFoundException;
 import com.dominik.intro.project.mapping.ArticleDtoToArticleEntityMapper;
@@ -8,8 +9,9 @@ import com.dominik.intro.project.model.ArticleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +22,7 @@ public class ArticleService {
     private static final Logger LOG = Logger.getLogger("Article Service");
 
     @Autowired
-    private RestTemplate restTemplate;
+    private ExternalConnector connector;
     @Autowired
     private ArticleRepository articleRepository;
     @Autowired
@@ -37,7 +39,7 @@ public class ArticleService {
             LOG.log(Level.INFO, "Found article in DB: {0}", article);
             return entityToDtoMapper.mapToDto(article);
         } else {
-            var articleDto = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts/" + articleId, ArticleDto.class);
+            var articleDto = connector.getArticleById(articleId);
             if (articleDto == null) {
                 LOG.log(Level.WARNING, "No article with article id: {0}, found in DB", articleId);
                 throw new ArticleNotFoundException("Article could not be found!");
@@ -53,17 +55,20 @@ public class ArticleService {
     }
 
     //TODO: fix it for all articles
-    public ArticleDto getArticleByUserId(int userId) {
-        var article = articleRepository.findById(userId);
-        if (article != null) {
-            return entityToDtoMapper.mapToDto(article);
+    public List<ArticleDto> getArticleByUserId(int userId) {
+        var articles = articleRepository.findAllByUserId(userId);
+        if (articles != null) {
+            List<ArticleDto> list = new ArrayList<>();
+            articles.forEach(article -> list.add(entityToDtoMapper.mapToDto(article)));
+            return list;
         } else {
-            var articleDto = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts?userId=" + userId, ArticleDto.class);
-            if (articleDto == null) {
+            var articlesDto = connector.getArticlesByUserId(userId);
+            if (articlesDto == null) {
+                //TODO:
                 throw new ArticleNotFoundException("Article could not be found!");
             }
-            articleRepository.save(dtoToEntityMapper.mapToEntity(articleDto));
-            return articleDto;
+//            articlesDto.forEach(articleDto -> articleRepository.save(dtoToEntityMapper.mapToEntity(articleDto)));
+            return articlesDto;
         }
     }
 }
