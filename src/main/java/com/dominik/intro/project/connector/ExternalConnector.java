@@ -8,6 +8,7 @@ import com.dominik.intro.project.model.UsersList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -37,5 +38,14 @@ public class ExternalConnector {
 
     public UserDto getUser(int userId) {
         return restTemplate.getForObject(BASE_URL + USER + userId , UserDto.class);
+    }
+
+    public boolean hasUserAccess(int userId) {
+        try {
+            restTemplate.getForObject(BASE_URL + USER + userId , UserDto.class);
+            return true;
+        } catch (HttpClientErrorException.NotFound e) {
+            return false;
+        }
     }
 }
