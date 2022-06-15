@@ -3,6 +3,8 @@ package com.dominik.intro.project.connector;
 import com.dominik.intro.project.model.ArticleDto;
 import com.dominik.intro.project.model.ArticleList;
 import com.dominik.intro.project.model.UserDto;
+import com.dominik.intro.project.model.UsersList;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +32,10 @@ public class ExternalConnector {
     }
 
     public List<UserDto> getUsers() {
+        return restTemplate.getForObject(BASE_URL + USER , UsersList.class).getUserDtos();
+    }
 
-        return null;
+    public UserDto getUser(int userId) {
+        return restTemplate.getForObject(BASE_URL + USER + userId , UserDto.class);
     }
 }
