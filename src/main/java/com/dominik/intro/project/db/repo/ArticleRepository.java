@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
     List<Article> findAllByUserId(int userId);
-    Article findById(int articleId);
+//    Article findById(int articleId);
 }

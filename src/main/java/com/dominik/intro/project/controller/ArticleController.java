@@ -3,11 +3,9 @@ package com.dominik.intro.project.controller;
 import com.dominik.intro.project.exception.ArticleAlreadyExistsException;
 import com.dominik.intro.project.exception.ArticleNotFoundException;
 import com.dominik.intro.project.exception.UserNotAllowedException;
-import com.dominik.intro.project.exception.UserNotFoundException;
 import com.dominik.intro.project.model.ArticleDto;
 import com.dominik.intro.project.service.ArticleService;
 import com.dominik.intro.project.service.UserService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -84,7 +82,7 @@ public class ArticleController {
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/articles/addArticle", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addArticle(@RequestBody ArticleDto articleDto) {
-
+        LOG.log(Level.INFO, "Adding article: {0}", articleDto);
         if (userService.userHasAccess(articleDto.getUserId())) {
             try{
                 articleService.saveArticle(articleDto);
@@ -133,6 +131,7 @@ public class ArticleController {
     @CrossOrigin(origins = "*")
     @PutMapping(value = "/articles/updateArticle", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateArticle(@RequestBody ArticleDto articleDto) {
+        LOG.log(Level.INFO, "Updating article: {0}", articleDto);
 
         if (!userService.userHasAccess(articleDto.getUserId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

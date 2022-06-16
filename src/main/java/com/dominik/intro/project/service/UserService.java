@@ -1,13 +1,11 @@
 package com.dominik.intro.project.service;
 
-import java.util.stream.Collectors;
-
+import com.dominik.intro.project.connector.ExternalConnector;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dominik.intro.project.connector.ExternalConnector;
-
-import lombok.RequiredArgsConstructor;
+import java.util.stream.Collectors;
 
 /**
  * User service class for handling logic connected to the user
