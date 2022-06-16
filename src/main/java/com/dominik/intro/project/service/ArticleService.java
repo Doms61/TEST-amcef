@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Article service class for handling most of the operations
+ */
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
@@ -33,6 +36,11 @@ public class ArticleService {
     @Autowired
     private EntityToDtoMapper entityToDtoMapper;
 
+    /**
+     * Get single article, or throw notFound in case it's not present anywhere
+     * @param articleId articleId
+     * @return ArticleDto
+     */
     public ArticleDto getArticleById(int articleId) {
 
         var article = articleRepository.findById(articleId);
@@ -52,6 +60,11 @@ public class ArticleService {
         }
     }
 
+    /**
+     * Get a list of articles or throw a notFound exception in case no article was found for that user
+     * @param userId userId
+     * @return List of ArticleDtos
+     */
     public List<ArticleDto> getArticlesByUserId(int userId) {
 
         var articles = articleRepository.findAllByUserId(userId);
@@ -73,6 +86,10 @@ public class ArticleService {
         }
     }
 
+    /**
+     * Save an article in the DataBase
+     * @param articleDto article to be saved
+     */
     public void saveArticle(ArticleDto articleDto) {
 
         if (articleRepository.findById(articleDto.getId()) != null) {
@@ -82,6 +99,11 @@ public class ArticleService {
         articleRepository.save(dtoToEntityMapper.mapToEntity(articleDto));
     }
 
+    /**
+     * Deletes an article from the DataBase, or throws an appropriate exception
+     * @param articleId articleId
+     * @param userId userId
+     */
     public void deleteArticle(int articleId, int userId) {
 
         var article = articleRepository.findById(articleId);
@@ -95,6 +117,10 @@ public class ArticleService {
 
     }
 
+    /**
+     * Updates an already existing article
+     * @param articleDto new article
+     */
     public void updateArticle(ArticleDto articleDto) {
 
         var article = articleRepository.findById(articleDto.getId());

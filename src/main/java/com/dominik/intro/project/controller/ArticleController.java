@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -81,7 +82,7 @@ public class ArticleController {
             @ApiResponse(responseCode = "409", description = "Conflict. Article already exists"),
     })
     @CrossOrigin(origins = "*")
-    @PostMapping(value = "/articles/addArticle")
+    @PostMapping(value = "/articles/addArticle", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addArticle(@RequestBody ArticleDto articleDto) {
 
         if (userService.userHasAccess(articleDto.getUserId())) {
@@ -108,7 +109,7 @@ public class ArticleController {
     })
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/articles/deleteArticle/{articleId}/{userId}")
-    public ResponseEntity<ArticleDto> deleteArticle(@PathVariable int articleId, @PathVariable int userId) {
+    public ResponseEntity<Void> deleteArticle(@PathVariable int articleId, @PathVariable int userId) {
        if (!userService.userHasAccess(userId)) {
            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
        }
@@ -130,8 +131,8 @@ public class ArticleController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
     })
     @CrossOrigin(origins = "*")
-    @PutMapping(value = "/articles/updateArticle")
-    public ResponseEntity<ArticleDto> updateArticle(@RequestBody ArticleDto articleDto) {
+    @PutMapping(value = "/articles/updateArticle", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> updateArticle(@RequestBody ArticleDto articleDto) {
 
         if (!userService.userHasAccess(articleDto.getUserId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
