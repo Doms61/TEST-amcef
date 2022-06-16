@@ -1,0 +1,6 @@
+CREATE TABLE article (
+ID           INT NOT NULL PRIMARY KEY,
+USER_ID      INT,
+BODY         VARCHAR(256),
+TITLE        VARCHAR(128)
+);

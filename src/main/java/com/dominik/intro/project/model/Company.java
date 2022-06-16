@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleDto {
+public class Company {
 
-    private int id;
-    private int userId;
-    private String title;
-    private String body;
+    private String name;
+    private String catchPhrase;
+    private String bs;
 }

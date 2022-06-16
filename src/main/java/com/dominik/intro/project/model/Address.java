@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleDto {
+public class Address {
 
-    private int id;
-    private int userId;
-    private String title;
-    private String body;
+    private String street;
+    private String suite;
+    private String city;
+    private String zipcode;
+    private Geo geo;
 }
