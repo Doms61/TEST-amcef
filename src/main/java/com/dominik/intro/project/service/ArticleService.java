@@ -125,10 +125,10 @@ public class ArticleService {
 
         var article = articleRepository.findById(articleDto.getId());
         if (article == null) {
-            throw new ArticleNotFoundException("Article was not found for deletion.");
+            throw new ArticleNotFoundException("Article was not found for update.");
         }
         if (article.getUserId() != articleDto.getUserId()){
-            throw new UserNotAllowedException("The user is not allowed to delete this article.");
+            throw new UserNotAllowedException("The user is not allowed to update this article.");
         }
         articleRepository.save(dtoToEntityMapper.mapToEntity(articleDto));
     }
