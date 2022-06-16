@@ -4,9 +4,7 @@ import com.dominik.intro.project.model.ArticleDto;
 import com.dominik.intro.project.model.ArticleList;
 import com.dominik.intro.project.model.UserDto;
 import com.dominik.intro.project.model.UsersList;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,8 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExternalConnector {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     private static final String BASE_URL = "http://jsonplaceholder.typicode.com";
     private static final String POST = "/posts";

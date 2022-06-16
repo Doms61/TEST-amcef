@@ -10,7 +10,6 @@ import com.dominik.intro.project.mapping.ArticleDtoToArticleEntityMapper;
 import com.dominik.intro.project.mapping.EntityToDtoMapper;
 import com.dominik.intro.project.model.ArticleDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,14 +26,10 @@ public class ArticleService {
 
     private static final Logger LOG = Logger.getLogger("Article Service");
 
-    @Autowired
-    private ExternalConnector connector;
-    @Autowired
-    private ArticleRepository articleRepository;
-    @Autowired
-    private ArticleDtoToArticleEntityMapper dtoToEntityMapper;
-    @Autowired
-    private EntityToDtoMapper entityToDtoMapper;
+    private final ExternalConnector connector;
+    private final ArticleRepository articleRepository;
+    private final ArticleDtoToArticleEntityMapper dtoToEntityMapper;
+    private final EntityToDtoMapper entityToDtoMapper;
 
     /**
      * Get single article, or throw notFound in case it's not present anywhere
@@ -43,13 +38,14 @@ public class ArticleService {
      */
     public ArticleDto getArticleById(int articleId) {
 
-        var article = articleRepository.findById(articleId);
-        if (article != null) {
+        var article = articleRepository.findById(articleId).orElse(Article.builder().build());
+        if (article.getUserId() != 0) {
             LOG.log(Level.INFO, "Found article in DB: {0}", article);
             return entityToDtoMapper.mapToDto(article);
         } else {
+            LOG.info("Searching...");
             var articleDto = connector.getArticleById(articleId);
-            if (articleDto == null) {
+            if (articleDto.getUserId() == 0) {
                 LOG.log(Level.WARNING, "No article with article id: {0}, found in DB", articleId);
                 throw new ArticleNotFoundException("Article could not be found!");
             }
@@ -92,7 +88,7 @@ public class ArticleService {
      */
     public void saveArticle(ArticleDto articleDto) {
 
-        if (articleRepository.findById(articleDto.getId()) != null) {
+        if (articleRepository.findById(articleDto.getId()).isPresent()) {
             throw new ArticleAlreadyExistsException("This article already exists in the database.");
         }
         LOG.log(Level.INFO, "Saving article with ID: {0}, to DB", articleDto.getId());
@@ -106,7 +102,7 @@ public class ArticleService {
      */
     public void deleteArticle(int articleId, int userId) {
 
-        var article = articleRepository.findById(articleId);
+        var article = articleRepository.findById(articleId).orElse(null);
         if (article == null) {
             throw new ArticleNotFoundException("Article was not found for deletion.");
         }
@@ -123,7 +119,7 @@ public class ArticleService {
      */
     public void updateArticle(ArticleDto articleDto) {
 
-        var article = articleRepository.findById(articleDto.getId());
+        var article = articleRepository.findById(articleDto.getId()).orElse(null);
         if (article == null) {
             throw new ArticleNotFoundException("Article was not found for update.");
         }

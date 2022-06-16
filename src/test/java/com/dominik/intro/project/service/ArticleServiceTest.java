@@ -1,22 +1,24 @@
 package com.dominik.intro.project.service;
 
-import java.util.List;
-
 import com.dominik.intro.project.connector.ExternalConnector;
 import com.dominik.intro.project.db.entity.Article;
 import com.dominik.intro.project.db.repo.ArticleRepository;
 import com.dominik.intro.project.exception.ArticleAlreadyExistsException;
 import com.dominik.intro.project.exception.ArticleNotFoundException;
 import com.dominik.intro.project.exception.UserNotAllowedException;
+import com.dominik.intro.project.mapping.ArticleDtoToArticleEntityMapper;
+import com.dominik.intro.project.mapping.EntityToDtoMapper;
 import com.dominik.intro.project.model.ArticleDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,24 +26,29 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ArticleServiceTest {
 
-    @MockBean
-    private RestTemplate restTemplate;
-    @MockBean
-    private ArticleRepository repository;
+    @InjectMocks
     private ArticleService service;
     @Mock
+    private ArticleRepository repository;
+//    @Mock
+    @Mock
     private ExternalConnector connector;
+    @Spy
+    private ArticleDtoToArticleEntityMapper dtoToArticleEntityMapper;
+    @Spy
+    private EntityToDtoMapper entityToDtoMapper;
 
     @Test
     void getArticleById_FromExternal(){
 
-        doReturn(null).when(repository).findById(any());
+        doReturn(Optional.of(Article.builder().build())).when(repository).findById(any());
+
         doReturn(ArticleDto.builder()
                 .userId(1)
                 .id(5)
                 .title("Title")
                 .body("Body")
-                .build()).when(connector).getArticleById(any());
+                .build()).when(connector).getArticleById(anyInt());
 
         var response = service.getArticleById(5);
         assertAll(
@@ -55,12 +62,12 @@ class ArticleServiceTest {
     @Test
     void getArticleById_FromInternal(){
 
-        doReturn(Article.builder()
+        doReturn(Optional.of(Article.builder()
                 .userId(1)
                 .id(5)
                 .title("Title")
                 .body("Body")
-                .build()).when(repository).findById(any());
+                .build())).when(repository).findById(anyInt());
 
         var response = service.getArticleById(5);
         assertAll(
@@ -74,8 +81,8 @@ class ArticleServiceTest {
     @Test
     void getArticleById_NotFound(){
 
-        doReturn(null).when(repository).findById(any());
-        doReturn(null).when(connector).getArticleById(any());
+        doReturn(Optional.of(Article.builder().build())).when(repository).findById(anyInt());
+        doReturn(ArticleDto.builder().build()).when(connector).getArticleById(anyInt());
 
         assertThrows(ArticleNotFoundException.class, () -> service.getArticleById(5));
     }
@@ -83,13 +90,13 @@ class ArticleServiceTest {
     @Test
     void getArticlesByUserId_FromExternal(){
 
-        doReturn(null).when(repository).findAllByUserId(any());
+        doReturn(Collections.EMPTY_LIST).when(repository).findAllByUserId(anyInt());
         doReturn(List.of(ArticleDto.builder()
                 .userId(1)
                 .id(5)
                 .title("Title")
                 .body("Body")
-                .build())).when(connector).getArticlesByUserId(any());
+                .build())).when(connector).getArticlesByUserId(anyInt());
 
         var response = service.getArticlesByUserId(5);
         assertAll(
@@ -108,7 +115,7 @@ class ArticleServiceTest {
                 .id(5)
                 .title("Title")
                 .body("Body")
-                .build())).when(repository).findAllByUserId(any());
+                .build())).when(repository).findAllByUserId(anyInt());
 
         var response = service.getArticlesByUserId(5);
         assertAll(
@@ -122,8 +129,8 @@ class ArticleServiceTest {
     @Test
     void getArticlesByUserId_NotFound(){
 
-        doReturn(null).when(repository).findAllByUserId(any());
-        doReturn(null).when(connector).getArticlesByUserId(any());
+        doReturn(Collections.EMPTY_LIST).when(repository).findAllByUserId(anyInt());
+        doReturn(Collections.EMPTY_LIST).when(connector).getArticlesByUserId(anyInt());
 
         assertThrows(ArticleNotFoundException.class, () -> service.getArticlesByUserId(5));
     }
@@ -138,7 +145,7 @@ class ArticleServiceTest {
                 .body("Body")
                 .build();
 
-        doReturn(article).when(repository).findById(any());
+        doReturn(Optional.of(article)).when(repository).findById(anyInt());
 
         assertThrows(ArticleAlreadyExistsException.class, () -> service.saveArticle(article));
     }
@@ -153,8 +160,7 @@ class ArticleServiceTest {
                 .body("Body")
                 .build();
 
-        doReturn(null).when(repository).save(any());
-        doReturn(null).when(repository).findById(any());
+        doReturn(Optional.empty()).when(repository).findById(anyInt());
 
         assertDoesNotThrow(() -> service.saveArticle(article));
     }
@@ -162,32 +168,31 @@ class ArticleServiceTest {
     @Test
     void deleteArticle_NotFound(){
 
-        doReturn(null).when(repository).findById(any());
+        doReturn(Optional.empty()).when(repository).findById(anyInt());
         assertThrows(ArticleNotFoundException.class, () -> service.deleteArticle(1,1));
     }
 
     @Test
     void deleteArticle_NotAllowed(){
-        doReturn(Article.builder()
+        doReturn(Optional.of(Article.builder()
                         .userId(5)
                         .id(1)
                         .title("title")
                         .body("body")
-                        .build()
-                ).when(repository).findById(any());
+                        .build())
+                ).when(repository).findById(anyInt());
         assertThrows(UserNotAllowedException.class, () -> service.deleteArticle(1,1));
     }
 
     @Test
     void deleteArticle(){
-        doReturn(Article.builder()
+        doReturn(Optional.of(Article.builder()
                 .userId(1)
                 .id(1)
                 .title("title")
                 .body("body")
-                .build()
-        ).when(repository).findById(any());
-        doNothing().when(repository).delete(any());
+                .build())
+        ).when(repository).findById(anyInt());
 
         assertDoesNotThrow(() -> service.deleteArticle(1,1));
     }
@@ -201,26 +206,26 @@ class ArticleServiceTest {
                 .title("title")
                 .body("body")
                 .build();
-        doReturn(null).when(repository).findById(any());
+        doReturn(Optional.empty()).when(repository).findById(anyInt());
         assertThrows(ArticleNotFoundException.class, () -> service.updateArticle(articleDto));
     }
 
     @Test
     void updateArticle_NotAllowed(){
         var articleDto = ArticleDto.builder()
-                .userId(5)
+                .userId(4)
                 .id(1)
                 .title("title")
                 .body("body")
                 .build();
 
-        doReturn(Article.builder()
+        doReturn(Optional.of(Article.builder()
                 .userId(5)
                 .id(1)
                 .title("title")
                 .body("body")
-                .build()
-        ).when(repository).findById(any());
+                .build())
+        ).when(repository).findById(anyInt());
         assertThrows(UserNotAllowedException.class, () -> service.updateArticle(articleDto));
     }
 
@@ -233,14 +238,13 @@ class ArticleServiceTest {
                 .body("body")
                 .build();
 
-        doReturn(Article.builder()
-                .userId(1)
+        doReturn(Optional.of(Article.builder()
+                .userId(5)
                 .id(1)
                 .title("title")
                 .body("body")
-                .build()
-        ).when(repository).findById(any());
-        doNothing().when(repository).delete(any());
+                .build())
+        ).when(repository).findById(anyInt());
 
         assertDoesNotThrow(() -> service.updateArticle(articleDto));
     }
