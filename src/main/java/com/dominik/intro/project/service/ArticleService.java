@@ -43,7 +43,6 @@ public class ArticleService {
             LOG.log(Level.INFO, "Found article in DB: {0}", article);
             return entityToDtoMapper.mapToDto(article);
         } else {
-            LOG.info("Searching...");
             var articleDto = connector.getArticleById(articleId);
             if (articleDto.getUserId() == 0) {
                 LOG.log(Level.WARNING, "No article with article id: {0}, found in DB", articleId);

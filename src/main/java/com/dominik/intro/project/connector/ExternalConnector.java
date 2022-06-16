@@ -29,7 +29,7 @@ public class ExternalConnector {
      * @return ArticleDto
      */
     public ArticleDto getArticleById(int articleId) {
-        return restTemplate.getForObject(BASE_URL + POST + articleId, ArticleDto.class);
+        return restTemplate.getForObject(BASE_URL + POST + "/" + articleId, ArticleDto.class);
     }
 
     /**
