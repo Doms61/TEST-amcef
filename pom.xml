@@ -98,6 +98,39 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+            <!-- https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/java.md -->
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>6.0.0</version>
+                <executions>
+                    <execution>
+                        <id>Articles</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/ArticleServices.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <configOptions>
+                                <library>native</library>
+                                <useRuntimeException>true</useRuntimeException>
+                                <invokerPackage>com.doms.articles</invokerPackage>
+                                <apiPackage>com.doms.articles.api</apiPackage>
+                                <modelPackage>com.doms.articles.models</modelPackage>
+                                <dateLibrary>java8
+                                </dateLibrary> <!--https://openapi-generator.tech/docs/generators/java/-->
+                            </configOptions>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=Instant</typeMapping>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>java.time.OffsetDateTime=java.time.Instant</importMapping>
+                            </importMappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

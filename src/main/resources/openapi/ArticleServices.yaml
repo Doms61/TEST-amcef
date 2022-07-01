@@ -1,0 +1,189 @@
+openapi: 3.0.1
+info:
+  title: Article Management Integration API
+  description: APIs for integration with Article Management
+  version: 0.1.5
+servers:
+  - url: 'https://{baseURL}:{port}/api/{version}'
+    description: Service URL
+    variables:
+      baseURL:
+        enum:
+          - article-mgmt.doms.com
+        default: article-mgmt.doms.com
+      port:
+        default: "8080"
+      version:
+        default: v1
+tags:
+  - name: GetArticleById
+    description: Get article by ID
+  - name: GetArticlesByUserId
+    description: Get articles by ID
+
+paths:
+  /articles/getArticleById/{articleId}:
+    get:
+      tags:
+        - GetArticleById
+      summary: Gets the article by article ID
+      description: Returns article
+      operationId: getArticleById
+      parameters:
+        - name: articleId
+          in: path
+          description: The identifier of the article
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful return of the article
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleResponse'
+        404:
+          description: No data found
+
+  /articles/getArticlesByUserId/{userId}:
+    get:
+      tags:
+        - GetArticlesByUserId
+      summary: Gets the article by user ID
+      description: Returns all articles made by a user
+      operationId: getArticlesByUserId
+      parameters:
+        - name: userId
+          in: path
+          description: The identifier of the user
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful return of all the articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArticleResponse'
+        404:
+          description: No data found
+
+  /articles/addArticle:
+    post:
+      tags:
+      - AddArticle
+      summary: Add article to database
+      description: Add article to database
+      operationId: addArticle
+      parameters:
+        - name: article
+          in: query
+          description: The article to be saved
+          required: true
+          schema:
+            $ref: '#/components/schemas/Article'
+      responses:
+        201:
+          description: Successfuly saved article
+        403:
+          description: Forbidden
+        409:
+          description: Conflict. Article already exists
+
+  /articles/deleteArticle/{articleId}/{userId}:
+    get:
+      tags:
+        - DeleteArticle
+      summary: Deletes the article
+      description: Deletes the article by articleId
+      operationId: deleteArticle
+      parameters:
+        - name: userId
+          in: path
+          description: The identifier of the user
+          required: true
+          schema:
+            type: integer
+        - name: articleId
+          in: path
+          description: The identifier of the article
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful deletion of the article
+        404:
+          description: No data found
+        403:
+          description: Forbidden
+
+  /articles/updateArticle:
+    put:
+      tags:
+        - UpdateArticle
+      summary: Update article in the database
+      description: Update article in the database
+      operationId: updateArticle
+      parameters:
+        - name: article
+          in: query
+          description: The article to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/Article'
+      responses:
+        201:
+          description: Successfully updated
+        403:
+          description: Forbidden
+        409:
+          description: Conflict. Article already exists
+
+components:
+  schemas:
+    ArticleResponse:
+      description: Article Response
+      type: object
+      properties:
+        id:
+          type: integer
+          description: article identifier
+        userId:
+          type: integer
+          description: user identifier
+        title:
+          type: string
+          description: title of the article
+        body:
+          type: string
+          description: body  of the article
+      required:
+        - id
+        - userId
+
+    Article:
+      description: Article
+      type: object
+      properties:
+        id:
+          type: integer
+          description: article identifier
+        userId:
+          type: integer
+          description: user identifier
+        title:
+          type: string
+          description: title of the article
+        body:
+          type: string
+          description: body  of the article
+      required:
+        - id
+        - userId
+        - body
+        - title
