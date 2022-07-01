@@ -17,6 +17,15 @@
     <name>demo</name>
     <description>Demo project for amcef</description>
     <properties>
+        <openapi.generator.maven.plugin.generateModelDocumentation>
+            false
+        </openapi.generator.maven.plugin.generateModelDocumentation>
+        <openapi.generator.maven.plugin.generateModelTests>
+            false
+        </openapi.generator.maven.plugin.generateModelTests>
+        <openapi.generator.maven.plugin.generateApiDocumentation>
+            false
+        </openapi.generator.maven.plugin.generateApiDocumentation>
         <java.version>17</java.version>
     </properties>
 
@@ -43,9 +52,9 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
         <dependency>
-            <groupId>io.swagger.core.v3</groupId>
+            <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>2.2.0</version>
+            <version>1.6.6</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
         <dependency>
@@ -72,10 +81,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-
-
-
-
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
 
     </dependencies>
 

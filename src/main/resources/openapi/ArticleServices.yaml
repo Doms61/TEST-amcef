@@ -21,7 +21,6 @@ tags:
 
 
 paths:
-
   /articles:
     get:
       tags:
