@@ -16,18 +16,31 @@ servers:
       version:
         default: v1
 tags:
-  - name: GetArticleById
-    description: Get article by ID
-  - name: GetArticlesByUserId
-    description: Get articles by ID
+  - name: Articles
+    description: Articles API
+
 
 paths:
-  /articles/getArticleById/{articleId}:
+
+  /articles:
     get:
       tags:
-        - GetArticleById
-      summary: Gets the article by article ID
+        - Articles
+      summary: Gets the articles
       description: Returns article
+      operationId: getArticles
+      responses:
+        200:
+          description: Successful return of the article
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleResponse'
+        404:
+          description: No data found
+
+  /articles/getArticleById/{articleId}:
+    get:
       operationId: getArticleById
       parameters:
         - name: articleId
@@ -48,10 +61,6 @@ paths:
 
   /articles/getArticlesByUserId/{userId}:
     get:
-      tags:
-        - GetArticlesByUserId
-      summary: Gets the article by user ID
-      description: Returns all articles made by a user
       operationId: getArticlesByUserId
       parameters:
         - name: userId
@@ -74,10 +83,6 @@ paths:
 
   /articles/addArticle:
     post:
-      tags:
-      - AddArticle
-      summary: Add article to database
-      description: Add article to database
       operationId: addArticle
       parameters:
         - name: article
@@ -96,10 +101,6 @@ paths:
 
   /articles/deleteArticle/{articleId}/{userId}:
     get:
-      tags:
-        - DeleteArticle
-      summary: Deletes the article
-      description: Deletes the article by articleId
       operationId: deleteArticle
       parameters:
         - name: userId
@@ -124,10 +125,6 @@ paths:
 
   /articles/updateArticle:
     put:
-      tags:
-        - UpdateArticle
-      summary: Update article in the database
-      description: Update article in the database
       operationId: updateArticle
       parameters:
         - name: article
